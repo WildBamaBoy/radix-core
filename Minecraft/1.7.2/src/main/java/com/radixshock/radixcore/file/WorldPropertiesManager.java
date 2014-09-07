@@ -83,14 +83,14 @@ public class WorldPropertiesManager implements Serializable
 		if (server.isDedicatedServer())
 		{
 			worldPropertiesFolderPath = new File(RadixCore.getInstance().runningDirectory + "/config/" + mod.getShortModName() + "/ServerWorlds/");
-			worldPropertiesFolder = new File(worldPropertiesFolderPath.getPath() + "/" + worldName + "/" + playerName + "/");
+			worldPropertiesFolder = new File(worldPropertiesFolderPath.getPath() + "/" + currentWorldName + "/" + currentPlayerName + "/");
 			worldPropertiesFile = new File(worldPropertiesFolder.getPath() + "/" + "ServerWorldProps.properties");
 		}
 
 		else
 		{
 			worldPropertiesFolderPath = new File(RadixCore.getInstance().runningDirectory + "/config/" + mod.getShortModName() + "/Worlds/");
-			worldPropertiesFolder = new File(worldPropertiesFolderPath.getPath() + "/" + worldName + "/" + playerName + "/");
+			worldPropertiesFolder = new File(worldPropertiesFolderPath.getPath() + "/" + currentWorldName + "/" + currentPlayerName + "/");
 			worldPropertiesFile = new File(worldPropertiesFolder.getPath() + "/" + "WorldProps.properties");
 		}
 
@@ -120,14 +120,14 @@ public class WorldPropertiesManager implements Serializable
 			mod.onCreateNewWorldProperties(this);
 
 			saveWorldProperties();
-			mod.getLogger().log("Saved new world properties for world '" + worldName + "' and player '" + playerName + "'.");
+			mod.getLogger().log("Saved new world properties for world '" + currentWorldName + "' and player '" + currentPlayerName + "'.");
 		}
 
 		//If the world does have its own world properties file, then load it.
 		else
 		{
 			loadWorldProperties();
-			mod.getLogger().log("Loaded existing world properties for world '" + worldName + "' and player '" + playerName + "'.");
+			mod.getLogger().log("Loaded existing world properties for world '" + currentWorldName + "' and player '" + currentPlayerName + "'.");
 		}
 	}
 
