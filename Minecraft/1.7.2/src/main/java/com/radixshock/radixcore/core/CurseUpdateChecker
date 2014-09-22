@@ -1,0 +1,120 @@
+package com.radixshock.radixcore.core;
+
+import java.net.URL;
+import java.util.Scanner;
+
+import net.minecraft.command.ICommandSender;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
+
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.radixshock.radixcore.constant.Font;
+import com.radixshock.radixcore.util.object.Version;
+
+/**
+ * <b>NOTICE!</b> This updater is set up differently. On your mod base,
+ * {@link IEnforcedCore#getRedirectURL()} is not used at all and for
+ * {@link IEnforcedCore#getUpdateURL()}, you put the slug for your project
+ * instead. For example:<br />
+ * http://curse.com/mc-mods/minecraft/<b><u>mb-battlegear-2</u></b><br />
+ * <br />
+ * Also, it's set up in a special way on your Curse project. Your files HAVE to
+ * have the exact name of it's version. But this updater will only work if you
+ * use <code>#.#.#</code>, <code>#.#</code> , or simply just <code>#</code>
+ * version formats. If you don't use any of these, you can change it by changing
+ * {@link simpleVersioning} below to say <code>true</code>. Also, just as a
+ * quick note, when you use version formats, they're interpreted as this:
+ * <table>
+ * <tr>
+ * <th>Actual version number</th>
+ * <th>How the updater interprets it</th>
+ * </tr>
+ * <tr>
+ * <td>1.6.4</td>
+ * <td>1.6.4</td>
+ * </tr>
+ * <tr>
+ * <td>1.8</td>
+ * <td>1.8.0</td>
+ * </tr>
+ * <tr>
+ * <td>1</td>
+ * <td>1.0.0</td>
+ * </tr>
+ * <tr>
+ * <td>1.2.3.4</td>
+ * <td>1.2.3</td>
+ * </tr>
+ * </table>
+ */
+public class CurseUpdateChecker implements IUpdateChecker {
+	boolean simpleVersioning = false;
+
+	private final IEnforcedCore mod;
+	private boolean hasCheckedForUpdates;
+	private ICommandSender commandSender;
+
+	public CurseUpdateChecker(IEnforcedCore mod) {
+		this.mod = mod;
+		hasCheckedForUpdates = false;
+	}
+
+	@Override
+	public void setCommandSender(ICommandSender sender) {
+		commandSender = sender;
+	}
+
+	@Override
+	public void run() {
+		mod.getLogger().log("Checking for updates...");
+
+		try {
+			if (hasCheckedForUpdates)
+				return;
+			URL url = new URL("http://widget.mcf.li/mc-mods/minecraft/"
+					+ mod.getUpdateURL() + ".json");
+			Scanner scanner = new Scanner(url.openStream());
+
+			JsonObject file = new GsonBuilder().create()
+					.fromJson(scanner.nextLine(), JsonObject.class)
+					.get("download").getAsJsonObject();
+
+			final Version mostRecentVersion = new Version(file.get("name")
+					.getAsString());
+			final String validGameVersions = file.get("version").getAsString();
+			final String downloadLink = file.get("url").getAsString();
+			final Version currentVersion = new Version(mod.getVersion());
+
+			hasCheckedForUpdates = true;
+
+			if (mostRecentVersion.isGreaterOrEqual(currentVersion)
+					&& !mostRecentVersion.equals(currentVersion)) {
+				commandSender.addChatMessage(new ChatComponentText(
+						Font.Color.DARKGREEN + mod.getShortModName() + " "
+								+ mostRecentVersion + Font.Color.YELLOW
+								+ " for " + Font.Color.DARKGREEN + "Minecraft "
+								+ validGameVersions + Font.Color.YELLOW
+								+ " is available."));
+				final IChatComponent chatComponentUpdate = new ChatComponentText(
+						Font.Color.YELLOW + "Click " + Font.Color.BLUE
+								+ Font.Format.ITALIC + Font.Format.UNDERLINE
+								+ "here" + Font.Format.RESET
+								+ Font.Color.YELLOW
+								+ " to download the update for "
+								+ mod.getShortModName() + ".");
+				chatComponentUpdate.getChatStyle()
+						.setChatClickEvent(
+								new ClickEvent(ClickEvent.Action.OPEN_URL,
+										downloadLink));
+				chatComponentUpdate.getChatStyle().setUnderlined(true);
+				commandSender.addChatMessage(chatComponentUpdate);
+			}
+
+		} catch (final Throwable e) {
+			e.printStackTrace();
+			mod.getLogger().log("Error checking for updates.");
+		}
+	}
+}
