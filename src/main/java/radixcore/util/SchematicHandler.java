@@ -1,6 +1,7 @@
 package radixcore.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -46,8 +47,13 @@ public final class SchematicHandler
 
 		return count;
 	}
+        
+        public static SortedMap<Point3D, BlockObj> readSchematic(String location)
+        {
+            return readSchematicInputStream(SchematicHandler.class.getResourceAsStream(location));
+        }
 
-	public static SortedMap<Point3D, BlockObj> readSchematic(String location)
+	public static SortedMap<Point3D, BlockObj> readSchematicInputStream(InputStream input)
 	{
 		Point3D origin = null;
 		Point3D offset = null;
@@ -56,7 +62,7 @@ public final class SchematicHandler
 
 		try
 		{
-			NBTTagCompound nbtdata = CompressedStreamTools.readCompressed(SchematicHandler.class.getResourceAsStream(location));
+			NBTTagCompound nbtdata = CompressedStreamTools.readCompressed(input);
 
 			short width = nbtdata.getShort("Width");
 			short height = nbtdata.getShort("Height");
