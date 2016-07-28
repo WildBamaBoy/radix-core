@@ -484,7 +484,7 @@ public final class RadixLogic
 		
 		for (Entity entity : entitiesAroundMe)
 		{
-			if (entity.getClass().isAssignableFrom(clazz))
+			if (clazz.isInstance(entity))
 			{
 				returnList.add(entity);
 			}
