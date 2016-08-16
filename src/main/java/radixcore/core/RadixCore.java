@@ -22,7 +22,7 @@ public class RadixCore
 {
 	protected static final String ID = "RadixCore";
 	protected static final String NAME = "RadixCore";
-	protected static final String VERSION = "1.10.2-2.1.2";
+	protected static final String VERSION = "1.10.2-2.1.3";
 
 	@Instance(ID)
 	private static RadixCore instance;
