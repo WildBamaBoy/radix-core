@@ -21,6 +21,7 @@ import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 
 public final class DataWatcherEx implements Serializable
 {
+	public static final long serialVersionUID = 5724026292501184283L;
 	public static boolean allowClientSideModification = false;
 	private static transient final HashMap dataTypes = new HashMap();
 
