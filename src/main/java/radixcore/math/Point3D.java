@@ -9,10 +9,10 @@ package radixcore.math;
 
 import java.util.List;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import radixcore.enums.EnumAxis;
-import radixcore.util.RadixMath;
+import radixcore.modules.RadixMath;
 
 /**
  * Used to store a group of 3D coordinates and easily move them around.
@@ -20,86 +20,34 @@ import radixcore.util.RadixMath;
 public final class Point3D implements Comparable
 {
 	public static final Point3D ZERO = new Point3D(0, 0, 0);
+	public static final Point3D NONE = new Point3D(true);
 	
-	public short sPosX;
-	public short sPosY;
-	public short sPosZ;
+	private int iPosX;
+	private int iPosY;
+	private int iPosZ;
 
-	public int iPosX;
-	public int iPosY;
-	public int iPosZ;
+	private float fPosX;
+	private float fPosY;
+	private float fPosZ;
 
-	public float fPosX;
-	public float fPosY;
-	public float fPosZ;
+	private double dPosX;
+	private double dPosY;
+	private double dPosZ;
 
-	public double dPosX;
-	public double dPosY;
-	public double dPosZ;
-
-	public Point3D(short posX, short posY, short posZ)
-	{
-		sPosX = posX;
-		sPosY = posY;
-		sPosZ = posZ;
-
-		iPosX = posX;
-		iPosY = posY;
-		iPosZ = posZ;
-
-		fPosX = posX;
-		fPosY = posY;
-		fPosZ = posZ;
-
-		dPosX = posX;
-		dPosY = posY;
-		dPosZ = posZ;
-	}
-
+	private boolean noneFlag;
+	
 	public Point3D(int posX, int posY, int posZ)
 	{
-		sPosX = (short) posX;
-		sPosY = (short) posY;
-		sPosZ = (short) posZ;
-
-		iPosX = posX;
-		iPosY = posY;
-		iPosZ = posZ;
-
-		fPosX = posX;
-		fPosX = posY;
-		fPosX = posZ;
-
-		dPosX = posX;
-		dPosY = posY;
-		dPosZ = posZ;
+		this((double)posX, (double)posY, (double)posZ);
 	}
 
 	public Point3D(float posX, float posY, float posZ)
 	{
-		sPosX = (short) posX;
-		sPosY = (short) posY;
-		sPosZ = (short) posZ;
-
-		iPosX = (int) posX;
-		iPosY = (int) posY;
-		iPosZ = (int) posZ;
-
-		fPosX = posX;
-		fPosY = posY;
-		fPosZ = posZ;
-
-		dPosX = posX;
-		dPosY = posY;
-		dPosZ = posZ;
+		this((double)posX, (double)posY, (double)posZ);
 	}
 
 	public Point3D(double posX, double posY, double posZ)
 	{
-		sPosX = (short) posX;
-		sPosY = (short) posY;
-		sPosZ = (short) posZ;
-
 		iPosX = (int) posX;
 		iPosY = (int) posY;
 		iPosZ = (int) posZ;
@@ -113,30 +61,121 @@ public final class Point3D implements Comparable
 		dPosZ = posZ;
 	}
 	
-	public Point3D setPoint(int posX, int posY, int posZ)
+	private Point3D(boolean noneFlag)
+	{
+		this(0.0D, 0.0D, 0.0D);
+		this.noneFlag = noneFlag;
+	}
+	
+	public void set(int posX, int posY, int posZ)
+	{
+		fallthroughSet((double)posX, (double)posY, (double)posZ);
+	}
+
+	public void set(float posX, float posY, float posZ)
+	{
+		fallthroughSet((double)posX, (double)posY, (double)posZ);
+	}
+	
+	public void set(double posX, double posY, double posZ)
+	{
+		fallthroughSet(posX, posY, posZ);
+	}
+	
+	private void fallthroughSet(double posX, double posY, double posZ)
+	{
+		iPosX = (int) posX;
+		iPosY = (int) posY;
+		iPosZ = (int) posZ;
+
+		fPosX = (float) posX;
+		fPosY = (float) posY;
+		fPosZ = (float) posZ;
+
+		dPosX = posX;
+		dPosY = posY;
+		dPosZ = posZ;
+	}
+	
+	public Point3D setNew(int posX, int posY, int posZ)
 	{
 		return new Point3D(posX, posY, posZ);
 	}
 
-	public Point3D setPoint(float posX, float posY, float posZ)
+	public Point3D setNew(float posX, float posY, float posZ)
 	{
 		return new Point3D(posX, posY, posZ);
 	}
 	
-	public Point3D setPoint(short posX, short posY, short posZ)
+	public Point3D setNew(double posX, double posY, double posZ)
 	{
 		return new Point3D(posX, posY, posZ);
 	}
 	
-	public Point3D setPoint(double posX, double posY, double posZ)
+	public double dX()
 	{
-		return new Point3D(posX, posY, posZ);
+		return dPosX;
+	}
+	
+	public double dY()
+	{
+		return dPosY;
+	}
+	
+	public double dZ()
+	{
+		return dPosZ;
+	}
+	
+	public float fX()
+	{
+		return fPosX;
+	}
+	
+	public float fY()
+	{
+		return fPosY;
+	}
+	
+	public float fZ()
+	{
+		return fPosZ;
+	}
+	
+	public int iX()
+	{
+		return iPosX;
+	}
+	
+	public int iY()
+	{
+		return iPosY;
+	}
+	
+	public int iZ()
+	{
+		return iPosZ;
+	}
+	
+	public boolean isNone()
+	{
+		return noneFlag;
+	}
+	
+	public static Point3D fromBlockPos(BlockPos pos)
+	{
+		return new Point3D(pos.getX(), pos.getY(), pos.getZ());
+	}
+	
+	public static Point3D fromEntityPosition(Entity entity)
+	{
+		return new Point3D(entity.posX, entity.posY, entity.posZ);
 	}
 	
 	public static Point3D getNearestPointInList(Point3D refPoint, List<Point3D> pointList)
 	{
 		Point3D returnPoint = null;
-		double lastDistance = 100.0D;
+		double lastDistance = Double.MAX_VALUE;
 		
 		for (Point3D point : pointList)
 		{
@@ -152,36 +191,23 @@ public final class Point3D implements Comparable
 		return returnPoint;
 	}
 	
-	public Point3D rotate(EnumAxis axis, float angle)
+	public static Point3D getFurthestPointInList(Point3D refPoint, List<Point3D> pointList)
 	{
-		if (axis == EnumAxis.X)
+		Point3D returnPoint = null;
+		double lastDistance = 0.0D;
+		
+		for (Point3D point : pointList)
 		{
-			return new Point3D(
-					dPosX, 
-					dPosY * Math.cos(angle) - dPosZ * Math.sin(angle), 
-					dPosY * Math.sin(angle) - dPosZ* Math.cos(angle));
+			double distanceTo = RadixMath.getDistanceToXYZ(refPoint.iPosX, refPoint.iPosY, refPoint.iPosZ, point.iPosX, point.iPosY, point.iPosZ);
+			
+			if (distanceTo > lastDistance)
+			{
+				returnPoint = point;
+				lastDistance = distanceTo;
+			}
 		}
 		
-		else if (axis == EnumAxis.Y)
-		{
-			return new Point3D(
-					dPosZ * Math.sin(angle) - dPosX * Math.cos(angle), 
-					dPosY, 
-					dPosZ * Math.cos(angle) - dPosX * Math.sin(angle));			
-		}
-		
-		else if (axis == EnumAxis.Z)
-		{
-			return new Point3D(
-					dPosX * Math.cos(angle) - dPosY * Math.sin(angle), 
-					dPosX * Math.sin(angle) - dPosY * Math.cos(angle), 
-					dPosZ);
-		}
-		
-		else
-		{
-			return Point3D.ZERO;
-		}
+		return returnPoint;
 	}
 	
 	public void writeToNBT(String name, NBTTagCompound nbt)

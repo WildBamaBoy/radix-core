@@ -1,41 +1,47 @@
 package radixcore.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import radixcore.network.RadixPacketHandler;
-import radixcore.update.RDXUpdateProtocol;
+import radixcore.command.CommandRadixCore;
+import radixcore.core.radix.CoreCrashWatcher;
+import radixcore.core.radix.CorePacketHandler;
+import radixcore.modules.updates.RDXUpdateProtocol;
 
-@Mod(modid = RadixCore.ID, name = RadixCore.NAME, version = RadixCore.VERSION, dependencies="required-after:Forge@[12.18.0.2007,)", acceptedMinecraftVersions = "[1.10.2]")
+@Mod(modid = RadixCore.ID, name = RadixCore.NAME, version = RadixCore.VERSION, acceptedMinecraftVersions = "[1.11]")
 public class RadixCore 
 {
-	protected static final String ID = "RadixCore";
-	protected static final String NAME = "RadixCore";
-	protected static final String VERSION = "1.10.2-2.1.3";
-
+	public static final String ID = "radixcore";
+	public static final String NAME = "RadixCore";
+	public static final String MINECRAFT_VERSION = "1.11";
+	public static final String MOD_VERSION = "2.3.0";
+	public static final String VERSION = MINECRAFT_VERSION + "-" + MOD_VERSION;
+	
 	@Instance(ID)
 	private static RadixCore instance;
 	private static Configuration config;
 	private static Logger logger;
 	private static String runningDirectory;
-	private static RadixCrashWatcher crashWatcher;
-	private static RadixPacketHandler packetHandler;
-	protected static final List<ModMetadataEx> registeredMods = new ArrayList<ModMetadataEx>();
+	private static CoreCrashWatcher crashWatcher;
+	private static CorePacketHandler packetHandler;
+	private static final List<ModMetadataEx> registeredMods = new ArrayList<ModMetadataEx>();
 
 	public static boolean isTesting;
 	public static boolean allowUpdateChecking;
 	public static boolean allowCrashReporting;
+	public static boolean allowStatisticsCollection;
 	
     @EventHandler 
     public void preInit(FMLPreInitializationEvent event)
@@ -46,24 +52,26 @@ public class RadixCore
     	
     	config = new Configuration(event.getSuggestedConfigurationFile());
     	config.setCategoryComment("Privacy", "Settings relating to your privacy are located here.");
-    	allowUpdateChecking = config.get("Privacy", "Allow update checking", true).getBoolean();
-    	allowCrashReporting = config.get("Privacy", "Allow crash reporting", true).getBoolean();
-    	
-    	config.get("Privacy", "Allow crash reporting", true).setComment( 
-    			"Mod crashes are sent to a remote server for debugging purposes. \n"
-    			+ "Your Minecraft username, OS version, Java version, PC username, and installed mods may be shared with the mod author.");
-    	
+    	allowUpdateChecking = config.get("Privacy", "Allow update checking", true, "WARNING: Will disable for all RadixCore-based mods!").getBoolean();
+    	allowCrashReporting = config.get("Privacy", "Allow crash reporting", true, "WARNING: Will disable for all RadixCore-based mods! Your Minecraft username, OS version, Java version, PC username, and installed mods may be shared with the mod author.").getBoolean();
+    	allowStatisticsCollection = config.get("Privacy", "Allow statistics collection", true, "WARNING: Will disable for all RadixCore-based mods! This setting will also respect your 'Snooper' settings in Minecraft.").getBoolean();
     	config.save();
     	
-    	crashWatcher = new RadixCrashWatcher();
-    	packetHandler = new RadixPacketHandler("RadixCore");
+    	crashWatcher = new CoreCrashWatcher();
+    	packetHandler = new CorePacketHandler("RadixCore");
     	
-		FMLCommonHandler.instance().bus().register(new RadixEvents());
 		MinecraftForge.EVENT_BUS.register(new RadixEvents());
 
 		ModMetadataEx exData = ModMetadataEx.getFromModMetadata(event.getModMetadata());
-		exData.updateProtocolClass = RDXUpdateProtocol.class;
+		exData.updateProtocol = new RDXUpdateProtocol();
+		exData.packetHandler = packetHandler;
 		RadixCore.registerMod(exData);
+    }
+    
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+    	event.registerServerCommand(new CommandRadixCore());
     }
     
     @EventHandler
@@ -87,7 +95,7 @@ public class RadixCore
     	return logger;
     }
     
-    public static RadixPacketHandler getPacketHandler()
+    public static CorePacketHandler getPacketHandler()
     {
     	return packetHandler;
     }
@@ -104,7 +112,7 @@ public class RadixCore
     
     public static List<ModMetadataEx> getRegisteredMods()
     {
-    	return registeredMods;
+    	return Collections.unmodifiableList(registeredMods);
     }
     
     public static ModMetadataEx getModMetadataByID(String modID)

@@ -1,15 +1,13 @@
 package radixcore.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import radixcore.core.RadixCore;
-import radixcore.data.DataWatcherEx;
-import radixcore.data.IWatchable;
-import radixcore.util.RadixExcept;
+import radixcore.modules.datawatcher.DataWatcherEx;
+import radixcore.modules.datawatcher.IWatchable;
+import radixcore.modules.net.AbstractPacket;
 
-public class PacketDataSyncReq extends AbstractPacket implements IMessage, IMessageHandler<PacketDataSyncReq, IMessage>
+public class PacketDataSyncReq extends AbstractPacket<PacketDataSyncReq>
 {
 	private int entityId;
 
@@ -35,31 +33,14 @@ public class PacketDataSyncReq extends AbstractPacket implements IMessage, IMess
 	}
 
 	@Override
-	public IMessage onMessage(PacketDataSyncReq packet, MessageContext context)
+	public void processOnGameThread(PacketDataSyncReq packet, MessageContext context) 
 	{
-		RadixCore.getPacketHandler().addPacketForProcessing(context.side, packet, context);
-		return null;
-	}
+		IWatchable watchable = (IWatchable) context.getServerHandler().playerEntity.worldObj.getEntityByID(packet.entityId);
 
-	@Override
-	public void processOnGameThread(IMessageHandler message, MessageContext context) 
-	{
-		PacketDataSyncReq packet = (PacketDataSyncReq)message;
-		
-		try
+		if (watchable != null) //Can be null, assuming it's a client-side sync issue. Doesn't seem to affect anything.
 		{
-			IWatchable watchable = (IWatchable) context.getServerHandler().playerEntity.worldObj.getEntityByID(packet.entityId);
-
-			if (watchable != null) //Can be null, assuming it's a client-side sync issue. Doesn't seem to affect anything.
-			{
-				DataWatcherEx dataWatcherEx = watchable.getDataWatcherEx();
-				RadixCore.getPacketHandler().sendPacketToPlayer(new PacketDataSync(packet.entityId, dataWatcherEx), context.getServerHandler().playerEntity);
-			}
-		}
-
-		catch (Throwable e)
-		{
-			RadixExcept.logErrorCatch(e, "Error sending sync data to client.");
+			DataWatcherEx dataWatcherEx = watchable.getDataWatcherEx();
+			RadixCore.getPacketHandler().sendPacketToPlayer(new PacketDataSync(packet.entityId, dataWatcherEx), context.getServerHandler().playerEntity);
 		}
 	}
 }

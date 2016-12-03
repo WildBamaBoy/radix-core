@@ -7,42 +7,71 @@
 
 package radixcore.core;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import radixcore.data.AbstractPlayerData;
-import radixcore.data.IWatchable;
+import radixcore.constant.Font.Color;
+import radixcore.constant.Font.Format;
+import radixcore.modules.client.RadixRender;
+import radixcore.modules.datawatcher.IWatchable;
 import radixcore.packets.PacketDataSyncReq;
-import radixcore.update.UpdateChecker;
+import radixcore.packets.PacketPostLogin;
 
 /**
- * Defines events handles by RadixCore.
+ * Defines events handled by RadixCore.
  */
 public class RadixEvents
 {
 	@SubscribeEvent
-	public void playerLoggedInEventHandler(PlayerLoggedInEvent event)
-	{		
-		for (ModMetadataEx exData : RadixCore.registeredMods)
+	public void renderGameOverlayEventHandler(RenderGameOverlayEvent.Text event)
+	{
+		if (RadixCore.isTesting)
 		{
-			if (RadixCore.allowUpdateChecking && event.player.worldObj.isRemote)
-			{
-				try
-				{
-					new Thread(new UpdateChecker(exData, event.player)).start();
-				}
-
-				catch (Exception e)
-				{
-					RadixCore.getLogger().error("Unexpected exception while starting update checker for " + exData.name + ". Error was " + e.getMessage());
-					continue;
-				}
-			}
+			RadixRender.drawTextPopup("RADIXCORE RENDER HELPER TEST", 5, 5);
+		}
+	}
+	
+	@SubscribeEvent
+	public void rightClickBlockEventHandler(PlayerInteractEvent.RightClickBlock event)
+	{
+		if (RadixCore.isTesting)
+		{
+			EntityPlayer player = event.getEntityPlayer();
+			World world = player.getEntityWorld();
+			BlockPos blockPos = event.getPos();
+			IBlockState state = world.getBlockState(blockPos);
+			
+			StringBuilder message = new StringBuilder();
+			
+			message.append(state.toString());
+			message.append(" @");
+			message.append(blockPos.toString().replace("BlockPos", ""));
+			
+			
+			player.addChatMessage(new TextComponentString(Color.GOLD + "[" + Color.DARKRED + "RadixCore" + Color.GOLD + "] " + Format.RESET + message.toString()));
+		}
+	}
+	
+	@SubscribeEvent
+	public void playerLoggedInEventHandler(PlayerLoggedInEvent event)
+	{
+		// By checking on the server and telling each client to check for updates,
+		// a server admin can control whether or not update notifications appear
+		// for their users.
+		if (RadixCore.allowUpdateChecking && event.player.isServerWorld())
+		{
+			RadixCore.getPacketHandler().sendPacketToPlayer(new PacketPostLogin(), event.player);
 		}
 	}
 
@@ -54,43 +83,29 @@ public class RadixEvents
 			RadixCore.getPacketHandler().sendPacketToServer(new PacketDataSyncReq(event.getEntity().getEntityId()));
 		}
 	}
-
-	@SubscribeEvent
-	public void worldSaveEventHandler(WorldEvent.Unload event)
-	{
-		if (!event.getWorld().isRemote)
-		{
-			for (ModMetadataEx metadata : RadixCore.registeredMods)
-			{
-				if (metadata.playerDataMap != null)
-				{
-					for (AbstractPlayerData data : metadata.playerDataMap.values())
-					{
-						if (data != null) //Crashes on extensively modded games, I'm not clear on why this may happen. Simple workaround now, may revisit later.
-						{
-							data.saveDataToFile();
-						}
-
-						else
-						{
-							RadixCore.getLogger().error("Skipping save of null player data for mod " + metadata.modId + ". You may notice a few oddities. Please report if so.");
-						}
-					}
-				}
-			}
-		}
-	}
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void clientTickEventHandler(ClientTickEvent event)
 	{
-		RadixCore.getPacketHandler().processPackets(Side.CLIENT);
+		for (ModMetadataEx exData : RadixCore.getRegisteredMods())
+		{
+			if (exData.packetHandler != null)
+			{
+				exData.packetHandler.processPackets(Side.CLIENT);
+			}
+		}
 	}
 	
 	@SubscribeEvent
 	public void serverTickEventHandler(ServerTickEvent event)
 	{
-		RadixCore.getPacketHandler().processPackets(Side.SERVER);
+		for (ModMetadataEx exData : RadixCore.getRegisteredMods())
+		{
+			if (exData.packetHandler != null)
+			{
+				exData.packetHandler.processPackets(Side.SERVER);
+			}
+		}
 	}
 }

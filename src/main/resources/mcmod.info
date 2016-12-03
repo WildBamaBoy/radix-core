@@ -1,6 +1,6 @@
 [
 {
-  "modid": "RadixCore",
+  "modid": "radixcore",
   "name": "RadixCore",
   "description": "A base framework for quickly creating and maintaining fully featured mods.",
   "version": "${version}",
@@ -8,7 +8,7 @@
   "url": "http://www.radix-shock.com/rc--download.html",
   "updateUrl": "",
   "authorList":  ["WildBamaBoy, SheWolfDeadly"],
-  "credits": "ntzrmtthihu777",
+  "credits": "",
   "logoFile": "radixcore.png",
   "screenshots": [],
   "dependencies": []

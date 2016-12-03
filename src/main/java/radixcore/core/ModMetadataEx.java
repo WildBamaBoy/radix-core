@@ -1,22 +1,14 @@
 package radixcore.core;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.ModMetadata;
-import radixcore.data.AbstractPlayerData;
-import radixcore.data.IWatchable;
-import radixcore.update.IUpdateProtocol;
-import radixcore.util.RadixExcept;
+import radixcore.modules.net.AbstractPacketHandler;
+import radixcore.modules.updates.IUpdateProtocol;
 
-public class ModMetadataEx extends ModMetadata
+public final class ModMetadataEx extends ModMetadata
 {
-	public Map<String, AbstractPlayerData> playerDataMap;
-	public Class classContainingClientDataContainer;
-	public Class classContainingGetPlayerDataMethod;
-	public Class<? extends IUpdateProtocol> updateProtocolClass;
+	public IUpdateProtocol updateProtocol;
 	public String curseId;
+	public AbstractPacketHandler packetHandler;
 	
 	public static ModMetadataEx getFromModMetadata(ModMetadata modData)
 	{
@@ -36,29 +28,9 @@ public class ModMetadataEx extends ModMetadata
 		exData.parentMod 	 = modData.parentMod;
 		exData.requiredMods  = modData.requiredMods;
 		exData.screenshots 	 = modData.screenshots;
-		exData.updateUrl 	 = modData.updateUrl;
 		exData.url 			 = modData.url;
 		exData.version 		 = modData.version;
 		
 		return exData;
-	}
-	
-	public IWatchable getPlayerData(EntityPlayer player)
-	{
-		IWatchable watchable = null;
-		Method method;
-		
-		try
-		{
-			method = classContainingGetPlayerDataMethod.getMethod("getPlayerData", EntityPlayer.class);
-			watchable = (IWatchable) method.invoke(null, player);
-		}
-		
-		catch (Exception e)
-		{
-			RadixExcept.logErrorCatch(e, "Unable to find getPlayerData method in provided class: " + classContainingGetPlayerDataMethod.getSimpleName());
-		}
-		
-		return watchable;
 	}
 }

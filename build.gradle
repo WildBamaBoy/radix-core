@@ -18,4 +18,9 @@ version = "2.1"
 group= "com.radixshock"
 archivesBaseName = "RadixCore"
 
+sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.6"
+}
+
 fileTree('gradle').include('*.gradle').collect().sort().each { apply from: it }
