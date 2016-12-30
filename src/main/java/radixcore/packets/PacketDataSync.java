@@ -53,7 +53,7 @@ public class PacketDataSync extends AbstractPacket implements IMessage, IMessage
 	public void processOnGameThread(IMessageHandler message, MessageContext context) 
 	{
 		PacketDataSync packet = (PacketDataSync)message;
-		IWatchable entity = (IWatchable)this.getPlayerClient().worldObj.getEntityByID(packet.entityId);
+		IWatchable entity = (IWatchable)this.getPlayerClient().getEntityWorld().getEntityByID(packet.entityId);
 		
 		try
 		{

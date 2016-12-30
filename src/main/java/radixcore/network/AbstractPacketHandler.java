@@ -87,7 +87,7 @@ public abstract class AbstractPacketHandler
 
 		for (int index = 0; index < playerList.getCurrentPlayerCount(); ++index)
 		{
-			final EntityPlayerMP playerInList = (EntityPlayerMP) playerList.getPlayerList().get(index);
+			final EntityPlayerMP playerInList = playerList.getPlayers().get(index);
 
 			if (!playerInList.getName().equals(player.getName()))
 			{

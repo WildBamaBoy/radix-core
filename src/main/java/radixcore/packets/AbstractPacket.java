@@ -42,7 +42,7 @@ public abstract class AbstractPacket
 	@SideOnly(Side.CLIENT)
 	public EntityPlayer getPlayerClient()
 	{
-		return Minecraft.getMinecraft().thePlayer;
+		return Minecraft.getMinecraft().player;
 	}
 	
 	/**

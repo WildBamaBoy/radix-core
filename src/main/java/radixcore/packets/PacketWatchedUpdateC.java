@@ -93,7 +93,7 @@ public class PacketWatchedUpdateC extends AbstractPacket implements IMessage, IM
 
 			else
 			{
-				watchable = (IWatchable)this.getPlayer(context).worldObj.getEntityByID(packet.entityId);
+				watchable = (IWatchable)this.getPlayer(context).getEntityWorld().getEntityByID(packet.entityId);
 			}
 
 			if (watchable != null)

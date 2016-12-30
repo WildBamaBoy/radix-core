@@ -35,7 +35,7 @@ public class Inventory extends InventoryBasic
 	{
 		int slotId;
 
-		if (itemStack.stackSize > 0)
+		if (itemStack.getCount() > 0)
 		{
 			if (itemStack.isItemDamaged())
 			{
@@ -43,8 +43,8 @@ public class Inventory extends InventoryBasic
 				
 				if (slotId >= 0)
 				{
-					setInventorySlotContents(slotId, ItemStack.copyItemStack(itemStack));
-					itemStack.stackSize = 0;
+					setInventorySlotContents(slotId, itemStack.copy()); 
+					itemStack.setCount(0);
 					combinePartialStacks();
 					return true;
 				}
@@ -60,12 +60,12 @@ public class Inventory extends InventoryBasic
 			{
 				do
 				{
-					slotId = itemStack.stackSize;
-					itemStack.stackSize = storePartialItemStack(itemStack);
+					slotId = itemStack.getCount();
+					itemStack.setCount(storePartialItemStack(itemStack));
 				}
-				while (itemStack.stackSize > 0 && itemStack.stackSize < slotId);
+				while (itemStack.getCount() > 0 && itemStack.getCount() < slotId);
 				combinePartialStacks();
-				return itemStack.stackSize < slotId;
+				return itemStack.getCount() < slotId;
 			}
 		}
 		
@@ -119,7 +119,7 @@ public class Inventory extends InventoryBasic
 
 				if (stackItem.getClass() == item.getClass())
 				{
-					totalCount += stack.stackSize;
+					totalCount += stack.getCount();
 				}
 			}
 		}
@@ -141,7 +141,7 @@ public class Inventory extends InventoryBasic
 
 			if (slot >= 0 && slot < this.getSizeInventory())
 			{
-				this.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(nbt));
+				this.setInventorySlotContents(slot, new ItemStack(nbt));
 			}
 		}
 	}
@@ -215,7 +215,7 @@ public class Inventory extends InventoryBasic
 
 			if (stack.getItemDamage() >= stack.getMaxDamage())
 			{
-				stack.stackSize = 0;
+				stack.setCount(0);
 				setInventorySlotContents(slotId, null);
 				return true;
 			}
@@ -231,7 +231,7 @@ public class Inventory extends InventoryBasic
 			final ItemStack currentStack = getStackInSlot(i);
 			if (currentStack != null)
 			{
-				if (currentStack.stackSize != currentStack.getMaxStackSize())
+				if (currentStack.getCount() != currentStack.getMaxStackSize())
 				{
 					for (int i2 = 0; i2 < getSizeInventory(); i2++)
 					{
@@ -242,11 +242,11 @@ public class Inventory extends InventoryBasic
 							{
 								if (currentStack.getItemDamage() == searchingStack.getItemDamage())
 								{
-									while (searchingStack.stackSize < searchingStack.getMaxStackSize())
+									while (searchingStack.getCount() < searchingStack.getMaxStackSize())
 									{
-										currentStack.stackSize++;
-										searchingStack.stackSize--;
-										if (searchingStack.stackSize == 0)
+										currentStack.setCount(currentStack.getCount() + 1);
+										searchingStack.setCount(currentStack.getCount() - 1);
+										if (searchingStack.getCount() == 0)
 										{
 											setInventorySlotContents(i2, null);
 											break;
@@ -267,7 +267,7 @@ public class Inventory extends InventoryBasic
 
 	private int storePartialItemStack(ItemStack itemStack)
 	{
-		int stackSize = itemStack.stackSize;
+		int stackSize = itemStack.getCount();
 		if (itemStack.getMaxStackSize() == 1)
 		{
 			final int slotId = getFirstEmptyStack();
@@ -278,7 +278,7 @@ public class Inventory extends InventoryBasic
 
 			if (getStackInSlot(slotId) == null)
 			{
-				setInventorySlotContents(slotId, ItemStack.copyItemStack(itemStack));
+				setInventorySlotContents(slotId, itemStack.copy());
 			}
 
 			return 0;
@@ -310,14 +310,14 @@ public class Inventory extends InventoryBasic
 
 		int itemStackSize = stackSize;
 
-		if (itemStackSize > getStackInSlot(slotId).getMaxStackSize() - getStackInSlot(slotId).stackSize)
+		if (itemStackSize > getStackInSlot(slotId).getMaxStackSize() - getStackInSlot(slotId).getCount())
 		{
-			itemStackSize = getStackInSlot(slotId).getMaxStackSize() - getStackInSlot(slotId).stackSize;
+			itemStackSize = getStackInSlot(slotId).getMaxStackSize() - getStackInSlot(slotId).getCount();
 		}
 
-		if (itemStackSize > getInventoryStackLimit() - getStackInSlot(slotId).stackSize)
+		if (itemStackSize > getInventoryStackLimit() - getStackInSlot(slotId).getCount())
 		{
-			itemStackSize = getInventoryStackLimit() - getStackInSlot(slotId).stackSize;
+			itemStackSize = getInventoryStackLimit() - getStackInSlot(slotId).getCount();
 		}
 
 		if (itemStackSize == 0)
@@ -330,8 +330,8 @@ public class Inventory extends InventoryBasic
 			stackSize -= itemStackSize;
 
 			ItemStack oldStack = getStackInSlot(slotId);
-			oldStack.stackSize += itemStackSize;
-			oldStack.animationsToGo = 5;
+			oldStack.setCount(oldStack.getCount() + itemStackSize);
+			oldStack.setAnimationsToGo(5);
 			setInventorySlotContents(slotId, oldStack);
 
 			return stackSize;
@@ -344,7 +344,7 @@ public class Inventory extends InventoryBasic
 		{
 			ItemStack stack = getStackInSlot(i);
 
-			if (stack != null && stack == itemStack && stack.isStackable() && stack.stackSize < stack.getMaxStackSize() && stack.stackSize < getInventoryStackLimit() && (!stack.getHasSubtypes() || stack.getItemDamage() == itemStack.getItemDamage()) && ItemStack.areItemStacksEqual(stack, itemStack))
+			if (stack != null && stack == itemStack && stack.isStackable() && stack.getCount() < stack.getMaxStackSize() && stack.getCount() < getInventoryStackLimit() && (!stack.getHasSubtypes() || stack.getItemDamage() == itemStack.getItemDamage()) && ItemStack.areItemStacksEqual(stack, itemStack))
 			{
 				return i;
 			}
@@ -380,12 +380,12 @@ public class Inventory extends InventoryBasic
 			
 			if (stack != null && stack.getItem() == item)
 			{
-				while (stack.stackSize != 0)
+				while (stack.getCount() != 0)
 				{
-					stack.stackSize--;
+					stack.setCount(stack.getCount() - 1);
 					qtyToRemove--;
 					
-					if (stack.stackSize == 0)
+					if (stack.getCount() == 0)
 					{
 						setInventorySlotContents(i, null);
 					}

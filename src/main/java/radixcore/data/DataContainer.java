@@ -11,7 +11,7 @@ public class DataContainer implements Serializable
 	public DataContainer(AbstractPlayerData data)
 	{
 		this.data = data;
-		this.data.owner = Minecraft.getMinecraft().thePlayer;
+		this.data.owner = Minecraft.getMinecraft().player;
 		this.data.dataWatcher.setObjectOwner(data);
 	}
 

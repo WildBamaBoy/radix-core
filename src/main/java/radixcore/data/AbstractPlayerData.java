@@ -39,7 +39,7 @@ public abstract class AbstractPlayerData implements Serializable, IWatchable
 		instantiateData();
 		
 		final File dataFolder = new File(playerDataPath
-				.replace("%WorldDir%", player.worldObj.getSaveHandler().getWorldDirectory().getAbsolutePath())
+				.replace("%WorldDir%", player.getEntityWorld().getSaveHandler().getWorldDirectory().getAbsolutePath())
 				.replace("%ModID%", getModMetadata().modId.toLowerCase()));
 		
 		dataFolder.mkdirs();

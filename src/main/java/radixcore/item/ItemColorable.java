@@ -29,7 +29,7 @@ public abstract class ItemColorable extends Item implements IItemColor
 
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		int meta = MathHelper.clamp_int(stack.getItemDamage(), 0, 15);
+		int meta = MathHelper.clamp(stack.getItemDamage(), 0, 15);
 		return super.getUnlocalizedName() + "." + Color16.fromId(meta).getName();
 	}
 

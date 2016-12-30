@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import radixcore.item.ItemEffect;
@@ -25,11 +27,11 @@ public final class RadixStartup
 			CreativeTabs returnTab = new CreativeTabs("tab" + metadata.modId + (name != null ? "." + name : ""))
 			{
 				@Override
-				public Item getTabIconItem()
+				public ItemStack getTabIconItem()
 				{
 					try 
 					{
-						return (Item)itemRefField.get(null);
+						return new ItemStack((Item)itemRefField.get(null));
 					} 
 					
 					catch (Exception e) 
@@ -103,7 +105,7 @@ public final class RadixStartup
 					
 					f.set(null, item);
 
-					GameRegistry.registerItem((Item) f.get(null), upperName);
+					GameRegistry.register((Item) f.get(null), new ResourceLocation(upperName));
 				}
 			}
 

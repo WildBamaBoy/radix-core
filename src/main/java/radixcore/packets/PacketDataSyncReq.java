@@ -48,7 +48,7 @@ public class PacketDataSyncReq extends AbstractPacket implements IMessage, IMess
 		
 		try
 		{
-			IWatchable watchable = (IWatchable) context.getServerHandler().playerEntity.worldObj.getEntityByID(packet.entityId);
+			IWatchable watchable = (IWatchable) context.getServerHandler().playerEntity.getEntityWorld().getEntityByID(packet.entityId);
 
 			if (watchable != null) //Can be null, assuming it's a client-side sync issue. Doesn't seem to affect anything.
 			{
