@@ -17,6 +17,7 @@ import radixcore.core.RadixCore;
 import radixcore.packets.PacketWatchedUpdateC;
 import radixcore.packets.PacketWatchedUpdateS;
 
+@Deprecated
 public final class DataWatcherEx implements Serializable
 {
 	public static boolean allowClientSideModification = false;

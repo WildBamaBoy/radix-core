@@ -43,7 +43,7 @@ public abstract class AbstractPacket<REQ extends IMessage> implements IMessage, 
 	@SideOnly(Side.CLIENT)
 	public EntityPlayer getPlayerClient()
 	{
-		return Minecraft.getMinecraft().thePlayer;
+		return Minecraft.getMinecraft().player;
 	}
 	
 	public static void setPacketHandler(AbstractPacketHandler handler)

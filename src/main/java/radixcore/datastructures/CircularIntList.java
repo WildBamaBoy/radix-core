@@ -1,4 +1,4 @@
-package radixcore.util;
+package radixcore.datastructures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,18 +8,18 @@ import java.util.List;
 /**
  * Creates a list that can be cycled through in order using next() and previous(). Does not permit duplicates or null values.
  */
-public final class NumberCycleList extends ArrayList<Integer>
+public final class CircularIntList extends ArrayList<Integer>
 {
 	private int index;
 	
-	public static NumberCycleList fromIntegers(Integer... integers)
+	public static CircularIntList fromIntegers(Integer... integers)
 	{
 		return fromList(Arrays.asList(integers));
 	}
 	
-	public static NumberCycleList fromList(List<Integer> list)
+	public static CircularIntList fromList(List<Integer> list)
 	{
-		NumberCycleList returnList = new NumberCycleList();
+		CircularIntList returnList = new CircularIntList();
 		
 		for (Integer i : list)
 		{

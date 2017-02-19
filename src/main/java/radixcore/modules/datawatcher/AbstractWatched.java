@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import radixcore.core.RadixCore;
 
+@Deprecated
 public abstract class AbstractWatched implements Serializable
 {
 	protected DataWatcherEx dataWatcher;

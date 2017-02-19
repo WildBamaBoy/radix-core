@@ -143,7 +143,7 @@ public final class RadixSchematics
 
 	public static void spawnStructureRelativeToPlayer(String location, EntityPlayer player)
 	{
-		spawnStructureRelativeToPoint(location, new Point3D(player.posX, player.posY + 1, player.posZ), player.worldObj);
+		spawnStructureRelativeToPoint(location, new Point3D(player.posX, player.posY + 1, player.posZ), player.world);
 	}
 
 	public static void spawnStructureRelativeToPoint(String location, Point3D point, World world)

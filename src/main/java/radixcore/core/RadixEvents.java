@@ -59,7 +59,7 @@ public class RadixEvents
 			message.append(blockPos.toString().replace("BlockPos", ""));
 			
 			
-			player.addChatMessage(new TextComponentString(Color.GOLD + "[" + Color.DARKRED + "RadixCore" + Color.GOLD + "] " + Format.RESET + message.toString()));
+			player.sendMessage(new TextComponentString(Color.GOLD + "[" + Color.DARKRED + "RadixCore" + Color.GOLD + "] " + Format.RESET + message.toString()));
 		}
 	}
 	

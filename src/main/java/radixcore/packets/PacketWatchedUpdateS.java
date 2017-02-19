@@ -57,7 +57,7 @@ public class PacketWatchedUpdateS extends AbstractPacket<PacketWatchedUpdateS>
 		EntityPlayer player = this.getPlayer(context);
 		IWatchable watchable = null;
 
-		watchable = (IWatchable)player.worldObj.getEntityByID(packet.entityId);
+		watchable = (IWatchable)player.world.getEntityByID(packet.entityId);
 
 		if (watchable != null)
 		{

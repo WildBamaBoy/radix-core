@@ -178,7 +178,7 @@ public final class RadixLogic
 	 */
 	public static <E extends Entity> E getClosestEntityExclusive(Entity entityOrigin, int range, @Nullable Class<E> type)
 	{
-		return getClosestEntity(Point3D.fromEntityPosition(entityOrigin), entityOrigin.worldObj, range, type, entityOrigin);
+		return getClosestEntity(Point3D.fromEntityPosition(entityOrigin), entityOrigin.world, range, type, entityOrigin);
 	}
 
 	/**
@@ -187,7 +187,7 @@ public final class RadixLogic
 	 */
 	public static <E extends Entity> E getClosestEntityInclusive(Entity entityOrigin, int range, @Nullable Class<E> type)
 	{
-		return getClosestEntity(Point3D.fromEntityPosition(entityOrigin), entityOrigin.worldObj, range, type, null);
+		return getClosestEntity(Point3D.fromEntityPosition(entityOrigin), entityOrigin.world, range, type, null);
 	}
 
 	/**
@@ -227,7 +227,7 @@ public final class RadixLogic
 	 */
 	public static Point3D getNearestBlock(Entity entity, int horizontalRange, int verticalRange, Block blockType)
 	{
-		return getNearestBlock(Point3D.fromEntityPosition(entity), entity.worldObj, horizontalRange, verticalRange, blockType);
+		return getNearestBlock(Point3D.fromEntityPosition(entity), entity.world, horizontalRange, verticalRange, blockType);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public final class RadixLogic
 	 */
 	public static Point3D getNearestBlock(Entity entity, int horizontalRange, Block blockType)
 	{
-		return getNearestBlock(Point3D.fromEntityPosition(entity), entity.worldObj, horizontalRange, 3, blockType);
+		return getNearestBlock(Point3D.fromEntityPosition(entity), entity.world, horizontalRange, 3, blockType);
 	}
 	
 	/**
@@ -277,7 +277,7 @@ public final class RadixLogic
 	 */
 	public static Point3D getFarthestBlock(Entity entity, int horizontalRange, int verticalRange, Block blockType)
 	{
-		return getFarthestBlock(Point3D.fromEntityPosition(entity), entity.worldObj, horizontalRange, verticalRange, blockType);
+		return getFarthestBlock(Point3D.fromEntityPosition(entity), entity.world, horizontalRange, verticalRange, blockType);
 	}
 
 	/**
@@ -287,7 +287,7 @@ public final class RadixLogic
 	 */
 	public static Point3D getFarthestBlock(Entity entity, int horizontalRange, Block blockType)
 	{
-		return getFarthestBlock(Point3D.fromEntityPosition(entity), entity.worldObj, horizontalRange, 3, blockType);
+		return getFarthestBlock(Point3D.fromEntityPosition(entity), entity.world, horizontalRange, 3, blockType);
 	}
 	
 	/**
@@ -356,7 +356,7 @@ public final class RadixLogic
 	 */
 	public static List<Point3D> getNearbyBlocks(Entity entity, @Nullable Block filter, int verticalRange)
 	{
-		return getNearbyBlocks(Point3D.fromEntityPosition(entity), entity.worldObj, filter, verticalRange, 3);
+		return getNearbyBlocks(Point3D.fromEntityPosition(entity), entity.world, filter, verticalRange, 3);
 	}
 	
 	/**
@@ -366,7 +366,7 @@ public final class RadixLogic
 	 */
 	public static List<Point3D> getNearbyBlocks(Entity entity, @Nullable Block filter, int horizontalRange, int verticalRange)
 	{
-		return getNearbyBlocks(Point3D.fromEntityPosition(entity), entity.worldObj, filter, horizontalRange, verticalRange);
+		return getNearbyBlocks(Point3D.fromEntityPosition(entity), entity.world, filter, horizontalRange, verticalRange);
 	}
 	
 	/**
@@ -401,7 +401,7 @@ public final class RadixLogic
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinDistance(Class<T> filter, Entity origin, int maxDistanceAway)
 	{
-		return getEntitiesWithinDistance(filter, origin.worldObj, Point3D.fromEntityPosition(origin), maxDistanceAway);
+		return getEntitiesWithinDistance(filter, origin.world, Point3D.fromEntityPosition(origin), maxDistanceAway);
 	}
 
 	/**
@@ -415,20 +415,20 @@ public final class RadixLogic
 	/**
 	 * Finds a y position given an x,y,z coordinate triple that is assumed to be the world's "ground". 
 	 * 
-	 * @param worldObj	The world in which blocks will be tested
+	 * @param world	The world in which blocks will be tested
 	 * @param x			X coordinate
 	 * @param y			Y coordinate, used as the starting height for finding ground.
 	 * @param z			Z coordinate
 	 * @return Integer representing the air block above the first non-air block given the provided ordered triples. 
 	 */
-	public static int getSpawnSafeTopLevel(World worldObj, int x, int y, int z)
+	public static int getSpawnSafeTopLevel(World world, int x, int y, int z)
 	{
 		Block block = Blocks.AIR;
 
 		while (block == Blocks.AIR && y > 0)
 		{
 			y--;
-			block = RadixBlocks.getBlock(worldObj, x, y, z);
+			block = RadixBlocks.getBlock(world, x, y, z);
 		}
 
 		return y + 1;
@@ -439,9 +439,9 @@ public final class RadixLogic
 	 * 
 	 * @see #getSpawnSafeTopLevel(World, int, int, int)
 	 */
-	public static int getSpawnSafeTopLevel(World worldObj, int x, int z) 
+	public static int getSpawnSafeTopLevel(World world, int x, int z) 
 	{
-		return getSpawnSafeTopLevel(worldObj, x, 256, z);
+		return getSpawnSafeTopLevel(world, x, 256, z);
 	}
 
 	/**
@@ -453,7 +453,7 @@ public final class RadixLogic
 	 */
 	public static boolean getBooleanWithProbability(int probabilityOfTrue)
 	{
-		probabilityOfTrue = MathHelper.clamp_int(probabilityOfTrue, 0, 100);
+		probabilityOfTrue = MathHelper.clamp(probabilityOfTrue, 0, 100);
 		
 		if (probabilityOfTrue <= 0)
 		{

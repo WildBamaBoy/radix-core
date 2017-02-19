@@ -55,7 +55,7 @@ public class PacketWatchedUpdateC extends AbstractPacket<PacketWatchedUpdateC>
 	{
 		IWatchable watchable = null;
 
-		watchable = (IWatchable)this.getPlayer(context).worldObj.getEntityByID(packet.entityId);
+		watchable = (IWatchable)this.getPlayer(context).world.getEntityByID(packet.entityId);
 
 		if (watchable != null)
 		{

@@ -52,8 +52,8 @@ public final class RadixUpdateChecker implements Runnable
 					chatComponentUpdate.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, exData.url));
 					chatComponentUpdate.getStyle().setUnderlined(true);
 					
-					commandSender.addChatMessage(new TextComponentString(messageUpdateVersion));
-					commandSender.addChatMessage(chatComponentUpdate);
+					commandSender.sendMessage(new TextComponentString(messageUpdateVersion));
+					commandSender.sendMessage(chatComponentUpdate);
 				}
 
 				updateProtocol.cleanUp();

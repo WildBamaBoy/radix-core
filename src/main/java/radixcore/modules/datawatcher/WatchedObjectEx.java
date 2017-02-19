@@ -2,6 +2,7 @@ package radixcore.modules.datawatcher;
 
 import java.io.Serializable;
 
+@Deprecated
 public final class WatchedObjectEx implements Serializable
 {
     private final int objectType;

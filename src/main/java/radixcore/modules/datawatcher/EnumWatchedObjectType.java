@@ -1,5 +1,6 @@
 package radixcore.modules.datawatcher;
 
+@Deprecated
 public enum EnumWatchedObjectType 
 {
 	Byte(0),

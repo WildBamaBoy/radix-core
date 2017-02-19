@@ -29,13 +29,13 @@ import radixcore.packets.PacketTest;
 public class CommandRadixCore extends CommandBase 
 {
 	@Override
-	public String getCommandName() 
+	public String getName() 
 	{
 		return "radixcore";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) 
+	public String getUsage(ICommandSender sender) 
 	{
 		return "/radixcore <subcommand> <arguments>";
 	}
@@ -157,7 +157,7 @@ public class CommandRadixCore extends CommandBase
 					Point3D playerPos = Point3D.fromEntityPosition(player);
 					EntityPlayer testEntity = null;
 					
-					testEntity = RadixLogic.getEntityOfTypeAtXYZ(EntityPlayer.class, player.worldObj, playerPos);
+					testEntity = RadixLogic.getEntityOfTypeAtXYZ(EntityPlayer.class, player.world, playerPos);
 					assertTrue(testEntity == player);
 					
 					testEntity = RadixLogic.getClosestEntityInclusive(player, 10, null);
@@ -166,7 +166,7 @@ public class CommandRadixCore extends CommandBase
 					testEntity = RadixLogic.getClosestEntityExclusive(player, 10, EntityPlayer.class);
 					assertTrue(testEntity == null);
 					
-					testEntity = RadixLogic.getClosestEntity(playerPos, player.worldObj, 10, null, null);
+					testEntity = RadixLogic.getClosestEntity(playerPos, player.world, 10, null, null);
 					assertTrue(testEntity == player);
 					
 					for (int i = 0; i < 1000; i++)
@@ -178,14 +178,14 @@ public class CommandRadixCore extends CommandBase
 					//Clear any obsidian around, just in case.
 					for (Point3D point : RadixLogic.getNearbyBlocks(player, Blocks.OBSIDIAN, 10))
 					{
-						player.worldObj.setBlockToAir(point.toBlockPos());
+						player.world.setBlockToAir(point.toBlockPos());
 					}
 					
 					Point3D nearest = RadixLogic.getNearestBlock(player, 10, Blocks.OBSIDIAN);
 					
 					assertTrue(nearest.isNone());
 					
-					player.worldObj.setBlockState(player.getPosition().add(5, 0, 0), Blocks.OBSIDIAN.getDefaultState());
+					player.world.setBlockState(player.getPosition().add(5, 0, 0), Blocks.OBSIDIAN.getDefaultState());
 					nearest = RadixLogic.getNearestBlock(player, 10, Blocks.OBSIDIAN);
 					
 					assertFalse(nearest.isNone());
@@ -193,14 +193,14 @@ public class CommandRadixCore extends CommandBase
 					//Clear again to place two for testing nearest and farthest
 					for (Point3D point : RadixLogic.getNearbyBlocks(player, Blocks.OBSIDIAN, 10))
 					{
-						player.worldObj.setBlockToAir(point.toBlockPos());
+						player.world.setBlockToAir(point.toBlockPos());
 					}
 					
 					BlockPos playerBlockPos = player.getPosition();
 					
-					player.worldObj.setBlockState(playerBlockPos.add(4, 0, 0), Blocks.OBSIDIAN.getDefaultState());
-					player.worldObj.setBlockState(playerBlockPos.add(8, 0, 0), Blocks.OBSIDIAN.getDefaultState());
-					player.worldObj.setBlockState(playerBlockPos.add(9, 0, 0), Blocks.OBSIDIAN.getDefaultState());
+					player.world.setBlockState(playerBlockPos.add(4, 0, 0), Blocks.OBSIDIAN.getDefaultState());
+					player.world.setBlockState(playerBlockPos.add(8, 0, 0), Blocks.OBSIDIAN.getDefaultState());
+					player.world.setBlockState(playerBlockPos.add(9, 0, 0), Blocks.OBSIDIAN.getDefaultState());
 					
 					nearest = RadixLogic.getNearestBlock(player, 10, 3, Blocks.OBSIDIAN);
 					Point3D farthest = RadixLogic.getFarthestBlock(player, 10, 3, Blocks.OBSIDIAN);
@@ -210,7 +210,7 @@ public class CommandRadixCore extends CommandBase
 					
 					for (Point3D point : RadixLogic.getNearbyBlocks(player, Blocks.OBSIDIAN, 10))
 					{
-						player.worldObj.setBlockToAir(point.toBlockPos());
+						player.world.setBlockToAir(point.toBlockPos());
 					}
 					
 					//Blocks returned from getNearbyBlocks should be in a cube.
@@ -221,9 +221,9 @@ public class CommandRadixCore extends CommandBase
 					}
 					
 					//Test getting entities
-					EntityHorse newHorse = new EntityHorse(player.worldObj);
+					EntityHorse newHorse = new EntityHorse(player.world);
 					newHorse.setPosition(player.posX + 5, player.posY, player.posZ);
-					player.worldObj.spawnEntityInWorld(newHorse);
+					player.world.spawnEntity(newHorse);
 					
 					List<EntityHorse> horses = RadixLogic.getEntitiesWithinDistance(EntityHorse.class, player, 10);
 
@@ -285,26 +285,26 @@ public class CommandRadixCore extends CommandBase
 					
 					BlockPos testPos = new BlockPos(player.posX + 5, player.posY, player.posZ);
 					
-					RadixBlocks.setBlock(player.worldObj, testPos, Blocks.BEDROCK);
-					assertTrue(RadixBlocks.getBlock(player.worldObj, testPos) == Blocks.BEDROCK);
-					RadixBlocks.setBlock(player.worldObj, testPos, Blocks.AIR);
-					assertTrue(RadixBlocks.getBlock(player.worldObj, testPos) == Blocks.AIR);
+					RadixBlocks.setBlock(player.world, testPos, Blocks.BEDROCK);
+					assertTrue(RadixBlocks.getBlock(player.world, testPos) == Blocks.BEDROCK);
+					RadixBlocks.setBlock(player.world, testPos, Blocks.AIR);
+					assertTrue(RadixBlocks.getBlock(player.world, testPos) == Blocks.AIR);
 					
 					// Verbose block setting and checking
-					RadixBlocks.setBlock(player.worldObj, testPos, 
+					RadixBlocks.setBlock(player.world, testPos, 
 							Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND));
 					
-					assertTrue(RadixBlocks.getBlock(player.worldObj, testPos) == Blocks.SAND);
-					assertTrue(RadixBlocks.blockHasState(player.worldObj, testPos, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND));
-					assertFalse(RadixBlocks.blockHasState(player.worldObj, testPos, BlockSand.VARIANT, BlockSand.EnumType.SAND));
+					assertTrue(RadixBlocks.getBlock(player.world, testPos) == Blocks.SAND);
+					assertTrue(RadixBlocks.blockHasState(player.world, testPos, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND));
+					assertFalse(RadixBlocks.blockHasState(player.world, testPos, BlockSand.VARIANT, BlockSand.EnumType.SAND));
 					
 					// Less verbose block setting and checking
-					RadixBlocks.setBlock(player.worldObj, testPos, Blocks.SAND, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND);
-					assertTrue(RadixBlocks.getBlock(player.worldObj, testPos) == Blocks.SAND);
-					assertFalse(RadixBlocks.blockHasState(player.worldObj, testPos, BlockSand.VARIANT, BlockSand.EnumType.SAND));
-					assertTrue(RadixBlocks.blockHasState(player.worldObj, testPos, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND));
+					RadixBlocks.setBlock(player.world, testPos, Blocks.SAND, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND);
+					assertTrue(RadixBlocks.getBlock(player.world, testPos) == Blocks.SAND);
+					assertFalse(RadixBlocks.blockHasState(player.world, testPos, BlockSand.VARIANT, BlockSand.EnumType.SAND));
+					assertTrue(RadixBlocks.blockHasState(player.world, testPos, BlockSand.VARIANT, BlockSand.EnumType.RED_SAND));
 					
-					RadixBlocks.setBlock(player.worldObj, testPos, Blocks.AIR);
+					RadixBlocks.setBlock(player.world, testPos, Blocks.AIR);
 				}
 				
 				catch (AssertionError e)
@@ -319,7 +319,7 @@ public class CommandRadixCore extends CommandBase
 	
 	private void addMessage(String message, EntityPlayer player)
 	{
-		player.addChatMessage(new TextComponentString(Color.GOLD + "[" + Color.DARKRED + "RadixCore" + Color.GOLD + "] " + Format.RESET + message));
+		player.sendMessage(new TextComponentString(Color.GOLD + "[" + Color.DARKRED + "RadixCore" + Color.GOLD + "] " + Format.RESET + message));
 	}
 	
 	private void passTest(String testName, EntityPlayer player)
