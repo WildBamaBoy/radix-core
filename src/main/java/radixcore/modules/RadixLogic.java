@@ -7,9 +7,11 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import radixcore.math.Point3D;
@@ -380,6 +382,39 @@ public final class RadixLogic
 	}
 	
 	/**
+	 * Gets nearby blocks by class using a point as the origin, with a horizontal range and assumed vertical range of 3.
+	 * 
+	 * This method will be <b>very</b> slow with large ranges.
+	 * 
+	 * @see #getNearbyBlocks(Point3D, World, Block, int, int)
+	 */
+	public static List<Point3D> getNearbyBlocks(Point3D origin, World world, Class filter, int horizontalRange)
+	{
+		List<Point3D> allNearbyBlocks = getNearbyBlocks(origin, world, null, horizontalRange, 3);
+		List<Point3D> returnList = new ArrayList<Point3D>();
+		
+		for (Point3D point : allNearbyBlocks)
+		{
+			if (world.getBlockState(point.toBlockPos()).getBlock().getClass() == filter)
+			{
+				returnList.add(point);
+			}
+		}
+		
+		return returnList;
+	}
+
+	/**
+	 * Gets nearby blocks by class using an entity as the origin, with a horizontal range and assumed vertical range of 3.
+	 * 
+	 * @see #getNearbyBlocks(Point3D, World, Class, int)
+	 */
+	public static List<Point3D> getNearbyBlocks(Entity origin, Class filter, int horizontalRange)
+	{
+		return getNearbyBlocks(Point3D.fromEntityPosition(origin), origin.world, filter, horizontalRange);
+	}
+	
+	/**
 	 * Gets a list of entities found within the given coordinates.
 	 * 
 	 * @param filter			The types of entities that should be in the list.
@@ -464,5 +499,53 @@ public final class RadixLogic
 		{
 			return new Random().nextInt(100) + 1 <= probabilityOfTrue;
 		}
+	}
+
+	@Deprecated
+	public static Point3D getFirstNearestBlockWithMeta(Entity entity, Block block, int meta, int maxDistanceAway)
+	{
+		final int x = (int) entity.posX;
+		final int y = (int) entity.posY;
+		final int z = (int) entity.posZ;
+
+		int xMov = 0 - maxDistanceAway;
+		int yMov = 3;
+		int zMov = 0 - maxDistanceAway;
+
+		while (true)
+		{
+			final IBlockState state = entity.world.getBlockState(new BlockPos(x + xMov, y + yMov, z + zMov));
+			final Block currentBlock = state.getBlock();
+			final int currentMeta = currentBlock.getMetaFromState(state);
+			
+			if (currentBlock == block && currentMeta == meta)
+			{
+				return new Point3D(x + xMov, y + yMov, z + zMov);
+			}
+
+			if (zMov == maxDistanceAway && xMov == maxDistanceAway && yMov == -3)
+			{
+				break;
+			}
+
+			if (zMov == maxDistanceAway && xMov == maxDistanceAway)
+			{
+				yMov--;
+				xMov = 0 - maxDistanceAway;
+				zMov = 0 - maxDistanceAway;
+				continue;
+			}
+
+			if (xMov == maxDistanceAway)
+			{
+				zMov++;
+				xMov = 0 - maxDistanceAway;
+				continue;
+			}
+
+			xMov++;
+		}
+
+		return null;
 	}
 }

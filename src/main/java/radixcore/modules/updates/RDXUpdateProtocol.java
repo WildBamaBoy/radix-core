@@ -13,7 +13,7 @@ import radixcore.core.RadixCore;
 
 /**
  * An update protocol that communicates with our server software in order to
- * check for updates. Please don't use this.
+ * check for updates. Please don't use this. It won't work for you.
  */
 public class RDXUpdateProtocol implements IUpdateProtocol
 {
@@ -22,7 +22,7 @@ public class RDXUpdateProtocol implements IUpdateProtocol
 	@Override
 	public UpdateData getUpdateData(ModMetadataEx modData) 
 	{
-		String minecraftVersion = "1.11";
+		String minecraftVersion = "1.11.2";
 		
 		String url = "http://files.radix-shock.com/get-xml-property.php?modName=%modName%&mcVersion=%mcVersion%&xmlProperty=version";
 		url = url.replace("%modName%", modData.modId).replace("%mcVersion%", minecraftVersion);
