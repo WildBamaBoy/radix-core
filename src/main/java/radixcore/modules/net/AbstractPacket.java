@@ -34,7 +34,7 @@ public abstract class AbstractPacket<REQ extends IMessage> implements IMessage, 
 
 		else
 		{
-			player = context.getServerHandler().playerEntity;
+			player = context.getServerHandler().player;
 		}
 
 		return player;

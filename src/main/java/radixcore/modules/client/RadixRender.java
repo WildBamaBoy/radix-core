@@ -3,9 +3,9 @@ package radixcore.modules.client;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,7 +22,7 @@ public final class RadixRender
 		float f1 = 0.00390625F;
 
 		final Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buffer = tessellator.getBuffer();
+		BufferBuilder buffer = tessellator.getBuffer();
 		
 		buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 		buffer.pos(x + 0, y + height, 0.0D).tex((u + 0) * f, ((v + height) * f1)).endVertex();
@@ -34,7 +34,7 @@ public final class RadixRender
 
 	public static void drawTextPopup(String text, int posX, int posY)
 	{
-		int k = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text);
+		int k = Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
 		int i1 = 8;
 		int color = 0xFEFFFEE * -1;
 
@@ -44,7 +44,7 @@ public final class RadixRender
 		drawGradientRect(posX - 4, posY - 3, posX - 3, posY + i1 + 3, color, color);
 		drawGradientRect(posX + k + 3, posY - 3, posX + k + 4, posY + i1 + 3, color, color);
 
-		Minecraft.getMinecraft().fontRendererObj.drawString(text, posX, posY, 0xFFFFFF);
+		Minecraft.getMinecraft().fontRenderer.drawString(text, posX, posY, 0xFFFFFF);
 
 		int borderColor = 0x505000FF;
 		int borderShade = (borderColor & 0xFEFEFE) >> 1 | borderColor & color;
@@ -58,11 +58,11 @@ public final class RadixRender
 	{
 		int longestTextLength = 0;
 		
-		int modY = Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT / 2 * textList.size();
+		int modY = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2 * textList.size();
 		
 		for (String text : textList)
 		{
-			int textLength = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text);
+			int textLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(text);
 			
 			if (textLength > longestTextLength)
 			{
@@ -81,7 +81,7 @@ public final class RadixRender
 
 		for (int i = 0; i < textList.size(); i++)
 		{
-			Minecraft.getMinecraft().fontRendererObj.drawString(textList.get(i), posX, posY + (Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT * i), 0xFFFFFF);
+			Minecraft.getMinecraft().fontRenderer.drawString(textList.get(i), posX, posY + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * i), 0xFFFFFF);
 		}
 
 		int borderColor = 0x505000FF;
@@ -110,7 +110,7 @@ public final class RadixRender
         GlStateManager.shadeModel(7425);
         
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer worldRenderer = tessellator.getBuffer();
+		BufferBuilder worldRenderer = tessellator.getBuffer();
 
 		worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 		worldRenderer.pos(yTop, xBottom, 0.0D).color(color1R, color1B, color1G, color1A).endVertex();

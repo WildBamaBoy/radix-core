@@ -35,12 +35,12 @@ public class PacketDataSyncReq extends AbstractPacket<PacketDataSyncReq>
 	@Override
 	public void processOnGameThread(PacketDataSyncReq packet, MessageContext context) 
 	{
-		IWatchable watchable = (IWatchable) context.getServerHandler().playerEntity.world.getEntityByID(packet.entityId);
+		IWatchable watchable = (IWatchable) context.getServerHandler().player.world.getEntityByID(packet.entityId);
 
 		if (watchable != null) //Can be null, assuming it's a client-side sync issue. Doesn't seem to affect anything.
 		{
 			DataWatcherEx dataWatcherEx = watchable.getDataWatcherEx();
-			RadixCore.getPacketHandler().sendPacketToPlayer(new PacketDataSync(packet.entityId, dataWatcherEx), context.getServerHandler().playerEntity);
+			RadixCore.getPacketHandler().sendPacketToPlayer(new PacketDataSync(packet.entityId, dataWatcherEx), context.getServerHandler().player);
 		}
 	}
 }
