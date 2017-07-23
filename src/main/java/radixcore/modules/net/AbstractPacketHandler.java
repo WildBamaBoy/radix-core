@@ -68,7 +68,7 @@ public abstract class AbstractPacketHandler
 			setPacketHandler.invoke(null, this);
 		}
 		
-		catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | IllegalArgumentException e)
+		catch (Exception e)
 		{
 			throw new RuntimeException(e);
 		}

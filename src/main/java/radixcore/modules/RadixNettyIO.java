@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -113,6 +114,9 @@ public final class RadixNettyIO
 	 */
 	public static byte[] compress(byte[] input)
 	{
+		return input;
+		
+		/*
 		try
 		{
 			final Deflater deflater = new Deflater();
@@ -139,7 +143,7 @@ public final class RadixNettyIO
 		{
 			RadixCore.getLogger().error("Error compressing byte array.", e);
 			return null;
-		}
+		}*/
 	}
 
 	/**
@@ -150,6 +154,9 @@ public final class RadixNettyIO
 	 */
 	public static byte[] decompress(byte[] input)
 	{
+		return input;
+		
+		/*
 		try
 		{
 			final Inflater inflater = new Inflater();
@@ -179,6 +186,7 @@ public final class RadixNettyIO
 			RadixCore.getLogger().error("Error decompressing byte array.", e);
 			return null;
 		}
+		*/
 	}
 
 	/**
@@ -203,6 +211,8 @@ public final class RadixNettyIO
 	public static byte[] readByteArray(ByteBuf buffer)
 	{
 		final int arraySize = buffer.readInt();
-		return decompress(buffer.readBytes(arraySize).array());
+		byte[] data = new byte[arraySize];
+		buffer.getBytes(buffer.readerIndex(), data, 0, arraySize);
+		return decompress(data);
 	}
 }
