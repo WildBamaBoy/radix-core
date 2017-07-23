@@ -8,18 +8,18 @@ import java.util.List;
 /**
  * Creates a list that can be cycled through in order using next() and previous(). Does not permit duplicates or null values.
  */
-public final class CircularIntList extends ArrayList<Integer>
+public final class CyclicIntList extends ArrayList<Integer>
 {
 	private int index;
 	
-	public static CircularIntList fromIntegers(Integer... integers)
+	public static CyclicIntList fromIntegers(Integer... integers)
 	{
 		return fromList(Arrays.asList(integers));
 	}
 	
-	public static CircularIntList fromList(List<Integer> list)
+	public static CyclicIntList fromList(List<Integer> list)
 	{
-		CircularIntList returnList = new CircularIntList();
+		CyclicIntList returnList = new CyclicIntList();
 		
 		for (Integer i : list)
 		{
