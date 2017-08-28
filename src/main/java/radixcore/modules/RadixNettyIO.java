@@ -213,6 +213,7 @@ public final class RadixNettyIO
 		final int arraySize = buffer.readInt();
 		byte[] data = new byte[arraySize];
 		buffer.getBytes(buffer.readerIndex(), data, 0, arraySize);
+		buffer.readerIndex(buffer.readerIndex() + arraySize);
 		return decompress(data);
 	}
 }

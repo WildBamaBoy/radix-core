@@ -27,23 +27,26 @@ public abstract class AbstractCrashWatcher
 			}
 		});
 
-		//Find the one with the latest timestamp
-		long lastModifiedTime = Long.MIN_VALUE;
-		File lastModifiedFile = null;
-
-		for (File file : crashReportFiles) 
+		if (crashReportFiles != null)
 		{
-			if (file.lastModified() > lastModifiedTime) 
+			//Find the one with the latest timestamp
+			long lastModifiedTime = Long.MIN_VALUE;
+			File lastModifiedFile = null;
+	
+			for (File file : crashReportFiles) 
 			{
-				lastModifiedFile = file;
-				lastModifiedTime = file.lastModified();
+				if (file.lastModified() > lastModifiedTime) 
+				{
+					lastModifiedFile = file;
+					lastModifiedTime = file.lastModified();
+				}
 			}
-		}
-
-		//Handle the crash
-		if (lastModifiedTime > startupTimestamp)
-		{
-			onCrash(lastModifiedFile);
+	
+			//Handle the crash
+			if (lastModifiedTime > startupTimestamp)
+			{
+				onCrash(lastModifiedFile);
+			}
 		}
 	}
 

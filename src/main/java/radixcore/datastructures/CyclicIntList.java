@@ -57,6 +57,11 @@ public final class CyclicIntList extends ArrayList<Integer>
 		return get(index);
 	}
 	
+	public void setIndex(int index)
+	{
+		this.index = index;
+	}
+	
 	public int get()
 	{
 		return get(index);
