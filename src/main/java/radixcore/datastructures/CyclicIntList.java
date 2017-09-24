@@ -54,6 +54,11 @@ public final class CyclicIntList extends ArrayList<Integer>
 			index = size() - 1;
 		}
 		
+		else if (index > size()) 
+		{
+			index = 0;
+		}
+		
 		return get(index);
 	}
 	
