@@ -26,7 +26,7 @@ public class RadixCore
 	public static final String ID = "radixcore";
 	public static final String NAME = "RadixCore";
 	public static final String MINECRAFT_VERSION = "1.12.x";
-	public static final String MOD_VERSION = "2.3.1";
+	public static final String MOD_VERSION = "2.2.1";
 	public static final String VERSION = MINECRAFT_VERSION + "-" + MOD_VERSION;
 	
 	@Instance(ID)
