@@ -20,7 +20,7 @@ import radixcore.core.radix.CoreCrashWatcher;
 import radixcore.core.radix.CorePacketHandler;
 import radixcore.modules.updates.RDXUpdateProtocol;
 
-@Mod(modid = RadixCore.ID, name = RadixCore.NAME, version = RadixCore.VERSION, acceptedMinecraftVersions = "[1.12, 1.12.1, 1.12.2]")
+@Mod(modid = RadixCore.ID, name = RadixCore.NAME, version = RadixCore.VERSION, acceptedMinecraftVersions = "[1.12,1.12.2]")
 public class RadixCore 
 {
 	public static final String ID = "radixcore";
