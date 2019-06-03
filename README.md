@@ -1,3 +1,7 @@
+Attention
+=========
+This project is now defunct. No further support or updates will be provided.
+
 RadixCore
 =========
 
